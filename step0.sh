@@ -28,9 +28,58 @@ then
 fi
 
 #
+# Get access key and secret key
+#
+ACCESS_KEY=
+SECRET_KEY=
+LOOP=1
+ANS=no
+
+while [ ${LOOP} -eq 1 ]
+do
+	LOOP=0
+	clear 
+	while [ "${ACCESS_KEY}" = "" ]
+	do
+		ACCESS_KEY="NO"
+		echo 
+		echo "Please provide access key or enter to exit' >>> "
+		read ACCESS_KEY
+	done
+
+	clear 
+	while [ "${SECRET_KEY}" = "" ]
+	do
+		SECRET_KEY="NO"
+		echo 
+		echo "Please provide secret key or enter to exit' >>> "
+		read SECRET_KEY
+	done
+
+	if [ ${ACCESS_KEY} != "NO" || ${SECRET_KEY} != "NO"  ]
+	then
+		clear
+		echo "ACCESS_KEY = ${ACCESS_KEY}"
+		echo "SECRET_KEY = ${SECRET_KEY}"
+		echo
+		echo "If this is correct please type 'yes' >>>> "
+		read ANS
+
+		if [ "${ANS}" != "yes" ]
+		then
+			ACCESS_KEY=
+			SECRET_KEY=
+			LOOP=1
+			ANS=no
+		fi
+	fi
+done
+
+#
 # Setup the example.tf file for initilization
 #
-cp step1.txt example.tf
+sed 's/<accessKey>/${ACCESS_KEY}/' step1.txt | sed 's/<secretKey>/${SECRET_KEY}/' > example.tf
+exit 1;
 
 #
 # Initialize terraform
