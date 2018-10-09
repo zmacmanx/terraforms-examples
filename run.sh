@@ -34,6 +34,8 @@ function runStep () {
 		if [ ${DEBUG} -eq 1 ]
 		then
 			cat "step${COUNTER}.sh"
+		else
+			echo "Step ${COUNTER}"
 		fi
 	fi
 

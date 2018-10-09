@@ -10,15 +10,6 @@ then
 fi
 
 #
-# Check for old provider key file
-#
-ls .provider_keys > /dev/null 2>&1
-if [ ${?} -eq 0 ]
-then
-	rm -f .provider_keys
-fi
-
-#
 # Check for old .terraform directory
 #
 ls .terraform > /dev/null 2>&1
@@ -45,12 +36,21 @@ ANS=
 LOOP=1
 SUB_LOOP=1
 
+#
+# Check for old provider key file
+#
+ls .provider_keys > /dev/null 2>&1
+if [ ${?} -eq 0 ]
+then
+	. .provider_keys
+fi
+
 while [ ${LOOP} -eq 1 ]
 do
 	LOOP=0
 
 	clear 
-	while [ ${SUB_LOOP} -eq 1 ]
+	while [ "X${ACCESS_KEY}" = "X" ] && [ ${SUB_LOOP} -eq 1 ]
 	do
 		SUB_LOOP=0
 
@@ -76,7 +76,7 @@ do
 		SUB_LOOP=1
 
 		clear 
-		while [ ${SUB_LOOP} -eq 1 ]
+		while [ "X${SECRET_KEY}" = "X" ] && [ ${SUB_LOOP} -eq 1 ]
 		do
 			SUB_LOOP=0
 
@@ -125,7 +125,13 @@ done
 #
 # Setup the example.tf file for initilization
 #
-sed "s/<accessKey>/${ACCESS_KEY}/" step1.txt | sed "s/<secretKey>/${SECRET_KEY}/" > example.tf
+cat step1.txt | awk -v ACCESS_KEY=${ACCESS_KEY} -v SECRET_KEY=${SECRET_KEY}  '{
+if ($1 == "access_key" )
+	printf("  access_key = \"%s\"\n", ACCESS_KEY)
+else if ( $1 == "secret_key" )
+	printf("  secret_key = \"%s\"\n", SECRET_KEY)
+else  print $0 
+}' > example.tf
 
 #
 # Initialize terraform

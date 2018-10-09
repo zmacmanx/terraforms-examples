@@ -15,9 +15,16 @@ then
 fi
 
 #
-# Copy the step2.txt file into example.tf
+# Setup the step2.txt file into example.tf
 #
-sed "s/<accessKey>/${ACCESS_KEY}/" step2.txt | sed "s/<secretKey>/${SECRET_KEY}/" > example.tf
+cat step2.txt | awk -v ACCESS_KEY=${ACCESS_KEY} -v SECRET_KEY=${SECRET_KEY}  '{
+if ($1 == "access_key" )
+	printf("  access_key = \"%s\"\n", ACCESS_KEY)
+else if ( $1 == "secret_key" )
+	printf("  secret_key = \"%s\"\n", SECRET_KEY)
+else  print $0 
+}' > example.tf
+
 
 # Now execute the plan
 #
