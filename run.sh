@@ -1,5 +1,6 @@
 #!bash
 
+DEBUG=0
 MSG=(
 	"Start by setting up terraform with the init process"
 	"Setting up a VM and Provider"
@@ -30,10 +31,12 @@ function runStep () {
 	ls "step${COUNTER}.sh" > /dev/null 2>&1
 	if [ ${?} -eq 0 ]
 	then
-		cat "step${COUNTER}.sh"
+		if [ ${DEBUG} -eq 1 ]
+		then
+			cat "step${COUNTER}.sh"
+		fi
 	fi
 
-	sleep 2
 	echo
 	echo "<Press enter to execute>"
 	read ${ANS}
@@ -61,4 +64,4 @@ COUNTER=0
 while [  ${COUNTER} -lt 10 ]; do
 	runStep ${COUNTER}
 	let COUNTER=COUNTER+1 
- done
+done
